@@ -1,0 +1,40 @@
+{
+  "name": "video-overlay",
+  "version": "1.0.0",
+  "main": "dist/video-overlay.cjs.js",
+  "module": "dist/video-overlay.esm.js",
+  "browser": "dist/video-overlay.umd.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davidjamesherzog/video-overlay"
+  },
+  "devDependencies": {
+    "@babel/core": "7.1.6",
+    "@babel/preset-env": "7.1.6",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "23.6.0",
+    "http-server": "^0.12.0",
+    "jest": "23.6.0",
+    "rollup": "0.67.1",
+    "rollup-plugin-babel": "4.0.3",
+    "rollup-plugin-commonjs": "9.2.0",
+    "rollup-plugin-eslint": "^5.0.0",
+    "rollup-plugin-node-resolve": "3.4.0",
+    "rollup-plugin-scss": "^0.4.0"
+  },
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "rollup -c",
+    "watch": "rollup -c -w",
+    "test": "jest",
+    "test-watch": "jest --watch",
+    "test-debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
+    "coverage": "jest --collectCoverage=true",
+    "clean": "rm -rf ./dist && rm -rf ./coverage",
+    "sample": "npm run build && http-server --p 3000"
+  },
+  "files": [
+    "dist"
+  ]
+}
