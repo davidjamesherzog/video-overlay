@@ -55,6 +55,93 @@ describe('overlay', () => {
 
     describe('createEl', () => {
 
+      beforeEach(() => {
+        document.appendContent = jest.fn();
+        jest.spyOn(document, 'getElementById').mockImplementation(id => id);
+        jest.spyOn(document, 'createElement').mockImplementation(() => {
+          return {
+            appendChild: jest.fn(),
+            innerHTML: '',
+            appendContent: jest.fn()
+          };
+        });
+
+      });
+
+      test('should set className with background', () => {
+        overlay.options_ = {
+          id: 'test',
+          showBackground: true,
+          align: 'top',
+          class: 'test'
+        };
+        overlay.createEl();
+        expect(overlay.el_.className).toEqual('video-overlay video-overlay-top test video-overlay-background video-hidden');
+      });
+
+      test('should set className with no background', () => {
+        overlay.options_ = {
+          id: 'test',
+          showBackground: false,
+          align: 'top',
+          class: 'test'
+        };
+        overlay.createEl();
+        expect(overlay.el_.className).toEqual('video-overlay video-overlay-top test video-overlay-no-background video-hidden');
+      });
+
+      test('should create el_ based on id', () => {
+        overlay.options_ = {
+          id: 'test'
+        };
+        overlay.createEl();
+        expect(overlay.el_.appendChild).toHaveBeenCalledWith('test');
+        expect(document.getElementById).toHaveBeenCalledWith('test');
+        expect(document.appendContent).not.toHaveBeenCalled();
+        expect(overlay.el_.innerHTML).toEqual('');
+      });
+
+      test('should create el_ based on a string', () => {
+        overlay.options_ = {
+          content: 'test string'
+        };
+        overlay.createEl();
+        expect(overlay.el_.appendChild).not.toHaveBeenCalled();
+        expect(document.appendContent).not.toHaveBeenCalled();
+        expect(overlay.el_.innerHTML).toEqual('test string');
+      });
+
+      test('should create el_ based on a document fragment', () => {
+        overlay.options_ = {
+          content: new DocumentFragment()
+        };
+        overlay.createEl();
+        expect(overlay.el_.appendChild).toHaveBeenCalledWith(overlay.options_.content);
+        expect(document.appendContent).not.toHaveBeenCalled();
+        expect(overlay.el_.innerHTML).toEqual('');
+      });
+
+      test('should create el_ based on content', () => {
+        overlay.options_ = {
+          content: {}
+        };
+        overlay.createEl();
+        expect(overlay.el_.appendChild).not.toHaveBeenCalled();
+        expect(document.appendContent).toHaveBeenCalledWith(overlay.el_, {});
+        expect(overlay.el_.innerHTML).toEqual('');
+      });
+
+      test('should call onReady function', () => {
+        overlay.options_ = {
+          id: 'test',
+          onReady: jest.fn()
+        };
+        overlay.createEl();
+        expect(overlay.el_.appendChild).toHaveBeenCalledWith('test');
+        expect(document.getElementById).toHaveBeenCalledWith('test');
+        expect(overlay.options_.onReady).toHaveBeenCalled();
+      });
+
     });
 
     describe('el', () => {
@@ -184,6 +271,63 @@ describe('overlay', () => {
 
     describe('shouldShow_', () => {
 
+      test('should return true if event is same as start', () => {
+        overlay.options_.start = 'play';
+        expect(overlay.shouldShow_(40, 'play')).toBeTruthy();
+      });
+
+      test('should return false if event is different than start', () => {
+        overlay.options_.start = 'play';
+        expect(overlay.shouldShow_(40, 'pause')).toBeFalsy();
+      });
+
+      test('should return false if time is less than start', () => {
+        overlay.options_.start = 30;
+        overlay.options_.end = 40;
+        expect(overlay.shouldShow_(20, 'time_update')).toBeFalsy();
+      });
+
+      test('should return true if time is between start and end', () => {
+        overlay.options_.start = 30;
+        overlay.options_.end = 40;
+        expect(overlay.shouldShow_(35, 'time_update')).toBeTruthy();
+      });
+
+      test('should return false if time is greater than end', () => {
+        overlay.options_.start = 30;
+        overlay.options_.end = 40;
+        expect(overlay.shouldShow_(20, 'time_update')).toBeFalsy();
+      });
+
+      test('should return false if time is less than start with an end event', () => {
+        overlay.options_.start = 30;
+        overlay.options_.end = 'pause';
+        overlay.hasShownSinceSeek_ = false;
+        expect(overlay.shouldShow_(20, 'time_update')).toBeFalsy();
+        expect(overlay.hasShownSinceSeek_).toBeTruthy();
+      });
+
+      test('should return true if time is greater than start with an end event', () => {
+        overlay.options_.start = 30;
+        overlay.options_.end = 'pause';
+        overlay.hasShownSinceSeek_ = false;
+        expect(overlay.shouldShow_(50, 'time_update')).toBeTruthy();
+        expect(overlay.hasShownSinceSeek_).toBeTruthy();
+      });
+
+      test('should return true if it has shown since last seek and time is equal to start', () => {
+        overlay.options_.start = 30;
+        overlay.options_.end = 'pause';
+        overlay.hasShownSinceSeek_ = true;
+        expect(overlay.shouldShow_(30, 'time_update')).toBeTruthy();
+      });
+
+      test('should return false if it has shown since last seek and time is not equal to start', () => {
+        overlay.options_.start = 30;
+        overlay.options_.end = 'pause';
+        overlay.hasShownSinceSeek_ = true;
+        expect(overlay.shouldShow_(40, 'time_update')).toBeFalsy();
+      });
     });
 
     describe('startListener_', () => {

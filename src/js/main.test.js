@@ -20,7 +20,6 @@ beforeEach(() => {
 describe('main', () => {
 
   test('should define overlays', () => {
-    debugger;
     let overlays_ = overlays({}, {overlays: [{
       id: 'play-info',
       start: 'play',
