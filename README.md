@@ -33,8 +33,26 @@ Once you've added the plugin script to your page, you can use it with any video:
 ```html
 <script src="path/to/videojs-overlay.js"></script>
 <script>
-  coming soon...
+  const player = document.getElementById('player');
+  overlays(player, {
+    debug: true,
+    overlays: [
+      {
+        id: 'paused',
+        start: 'pause',
+        end: 'play',
+        align: 'center'
+      }
+    ]
+  });
 </script>
+...
+<div class="video">
+  <video id="player" class="video-element" src="http://somevideo.com/test.mp4" controls></video>
+</div>
+<div id="pause-info">
+  Paused
+</div>
 ```
 
 ## Documentation
