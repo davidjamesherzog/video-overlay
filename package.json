@@ -1,9 +1,9 @@
 {
   "name": "video-overlay",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "main": "dist/video-overlay.cjs.js",
   "module": "dist/video-overlay.esm.js",
-  "browser": "dist/video-overlay.umd.js",
+  "browser": "dist/video-overlay.js",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,8 +28,8 @@
     "build": "rollup -c",
     "watch": "rollup -c -w",
     "test": "jest",
-    "test-watch": "jest --watch",
     "test-debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
+    "test-watch": "jest --watch",
     "coverage": "jest --collectCoverage=true",
     "clean": "rm -rf ./dist && rm -rf ./coverage",
     "sample": "npm run build && http-server --p 3000"
