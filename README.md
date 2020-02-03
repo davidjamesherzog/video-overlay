@@ -50,7 +50,7 @@ Once you've added the plugin script to your page, you can use it with any video:
 <div class="video">
   <video id="player" class="video-element" src="http://somevideo.com/test.mp4" controls></video>
 </div>
-<div id="pause-info">
+<div id="paused">
   Paused
 </div>
 ```
